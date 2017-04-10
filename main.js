@@ -3,6 +3,8 @@ var height = 400;
 
 var canvas = document.querySelector("#main");
 var ctx = canvas.getContext("2d");
+ctx.lineWidth = 5;
+ctx.lineCap = "round";
 var keys = [];
 
 function Vec2(x, y) {
@@ -91,6 +93,7 @@ function Player(x, y, gravity, level) {
     this.pan = new Vec2(x, y);
     this.angle = gravity;
     this.level = level;
+    this.drawSize = 18;
     this.size = 20;
 };
 
@@ -102,7 +105,7 @@ Player.prototype.view = function() {
 
 Player.prototype.draw = function() {
     ctx.beginPath();
-    ctx.arc(this.pos.x, this.pos.y, this.size, 0, 2 * Math.PI);
+    ctx.arc(this.pos.x, this.pos.y, this.drawSize, 0, 2 * Math.PI);
     ctx.fill();
 };
 
