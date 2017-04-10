@@ -43,6 +43,9 @@ Player.prototype.update = function() {
     this.vel.add(gravity);
     var closestPoint = this.level.closestPoint(this.pos, this.size * 2);
     if(closestPoint[0] < this.size) {
+	if(closestPoint[2]["onTouch"]) {
+	    closestPoint[2]["onTouch"]();
+	}
         var push = closestPoint[1].get();
         push.sub(this.pos);
         push.normalize();
@@ -51,7 +54,7 @@ Player.prototype.update = function() {
         this.pos.sub(push);
         var accel = normal.get();
         accel.mult(this.vel.dot(normal));
-        if(this.vel.mag() > 7) {
+        if(this.vel.dot(normal) > 7) {
             accel.mult(1.5);
         }
         this.vel.sub(accel);

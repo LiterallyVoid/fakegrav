@@ -6,7 +6,7 @@ function Level(data) {
     for(var i = 0; i < objects.length; i++) {
         if(objects[i][0] == "line") {
             this.objects.push(new Line(objects[i][1], objects[i][2],
-				       objects[i][3], objects[i][4]));
+				       objects[i][3], objects[i][4], objects[i][5]));
         } else if(objects[i][0] == "playerSpawn") {
             this.player = new Player(objects[i][1], objects[i][2],
 				     objects[i][3], this);
@@ -29,7 +29,7 @@ Level.prototype.update = function() {
 };
 
 Level.prototype.closestPoint = function(point, minDistance) {
-    var closestPoint = [1000000, null];
+    var closestPoint = [1000000, null, {}];
     for(var i = 0; i < this.objects.length; i++) {
         var objectClosestPoint = this.objects[i].closestPoint(point, minDistance);
         if(objectClosestPoint[0] < closestPoint[0]) {

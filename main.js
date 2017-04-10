@@ -46,8 +46,8 @@ function loop(time) {
 
     ctx.lineWidth = 5;
     ctx.lineCap = "round";
-    ctx.fillStyle = "#111";
-    ctx.strokeStyle = "#111";
+    ctx.fillStyle = "#222";
+    ctx.strokeStyle = "#222";
 
     currentLevel.draw();
 

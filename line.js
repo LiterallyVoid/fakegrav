@@ -1,4 +1,4 @@
-function Line(x1, y1, x2, y2) {
+function Line(x1, y1, x2, y2, properties) {
     this.p1 = new Vec2(x1, y1);
     this.p2 = new Vec2(x2, y2);
     this.normal = new Vec2(this.p1.y - this.p2.y, this.p2.x - this.p1.x);
@@ -9,9 +9,16 @@ function Line(x1, y1, x2, y2) {
     this.startNormal.normalize();
     this.startDistance = this.startNormal.dot(this.p1);
     this.length = this.p1.dist(this.p2);
+
+    this.properties = properties || {"type": "normal"};
+    if(this.properties["type"] == "exit") {
+	this.properties["onTouch"] = nextLevel;
+	this.properties["color"] = "#f0f";
+    }
 };
 
 Line.prototype.draw = function() {
+    ctx.strokeStyle = this.properties["color"] || "#222";
     ctx.beginPath();
     ctx.moveTo(this.p1.x, this.p1.y);
     ctx.lineTo(this.p2.x, this.p2.y);
@@ -24,7 +31,8 @@ Line.prototype.closestPoint = function(point, minDistance) {
         var closestPoint = this.startNormal.get();
         closestPoint.mult(lineDist);
         closestPoint.add(this.p1);
-        return [Math.abs(this.normal.dot(point) - this.distance), closestPoint];
+        return [Math.abs(this.normal.dot(point) - this.distance), closestPoint,
+		this.properties];
     }
     if(lineDist < -minDistance || lineDist > this.length + minDistance) {
         return [10000000, null];
@@ -32,8 +40,8 @@ Line.prototype.closestPoint = function(point, minDistance) {
     var distP1 = this.p1.dist(point);
     var distP2 = this.p2.dist(point);
     if(distP1 < distP2) {
-        return [distP1, this.p1];
+        return [distP1, this.p1, this.properties];
     } else {
-        return [distP2, this.p2];
+        return [distP2, this.p2, this.properties];
     }
 };
