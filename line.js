@@ -11,14 +11,9 @@ function Line(x1, y1, x2, y2, properties) {
     this.length = this.p1.dist(this.p2);
 
     this.properties = properties || {"type": "normal"};
-    if(this.properties["type"] == "exit") {
-	this.properties["onTouch"] = nextLevel;
-	this.properties["color"] = "#f0f";
-    }
 };
 
 Line.prototype.draw = function() {
-    ctx.strokeStyle = this.properties["color"] || "#222";
     ctx.beginPath();
     ctx.moveTo(this.p1.x, this.p1.y);
     ctx.lineTo(this.p2.x, this.p2.y);
