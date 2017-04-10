@@ -41,7 +41,7 @@ Player.prototype.update = function() {
     side.rotate(Math.PI * 0.5);
     this.pos.add(this.vel);
     this.vel.add(gravity);
-    var closestPoint = this.level.closestPoint(this.pos, this.size * 2);
+    var closestPoint = this.level.closestPoint(this.pos, this.size * 6);
     if(closestPoint[0] < this.size) {
 	if(closestPoint[2]["onTouch"]) {
 	    closestPoint[2]["onTouch"]();
@@ -58,14 +58,31 @@ Player.prototype.update = function() {
             accel.mult(1.5);
         }
         this.vel.sub(accel);
-
-        this.gravity = normal.heading() - Math.PI * 0.5;
         
         if(keys[38]) {
             var force = gravity.get();
             force.mult(-30);
             this.vel.add(force);
         }
+
+        this.gravity = normal.heading() - Math.PI * 0.5;
+    } else {
+	if(closestPoint[0] < this.size * 4) {
+            var normal = closestPoint[1].get();
+            normal.sub(this.pos);
+            normal.normalize();
+            var newGravity = normal.heading() - Math.PI * 0.5;
+	    var angleDiff = (newGravity - this.gravity);
+	    while(angleDiff < -Math.PI) {
+		angleDiff += Math.PI * 2;
+		this.gravity -= Math.PI * 2;
+	    }
+	    while(angleDiff > Math.PI) {
+		angleDiff -= Math.PI * 2;
+		this.gravity += Math.PI * 2;
+	    }
+	    this.gravity += angleDiff * (1 - (closestPoint[0] / (this.size * 4)));
+	}
     }
     var accel = side.get();
     accel.mult(this.vel.dot(side) * 0.5);
