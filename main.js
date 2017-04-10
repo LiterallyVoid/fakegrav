@@ -3,8 +3,6 @@ var height = 400;
 
 var canvas = document.querySelector("#main");
 var ctx = canvas.getContext("2d");
-ctx.lineWidth = 5;
-ctx.lineCap = "round";
 var keys = [];
 
 function Vec2(x, y) {
@@ -285,6 +283,12 @@ function loop(time) {
     lastUpdate = time;
 
     ctx.clearRect(0, 0, width, height);
+
+    ctx.lineWidth = 5;
+    ctx.lineCap = "round";
+    ctx.fillStyle = "#111";
+    ctx.strokeStyle = "#111";
+
     currentLevel.draw();
 
     accumulator += delta;
