@@ -10,7 +10,7 @@ function Line(x1, y1, x2, y2, properties) {
     this.startDistance = this.startNormal.dot(this.p1);
     this.length = this.p1.dist(this.p2);
 
-    this.properties = properties || {"type": "normal"};
+    this.properties = properties || {};
 };
 
 Line.prototype.draw = function() {

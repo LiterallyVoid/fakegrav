@@ -9,6 +9,9 @@ function Level(data) {
 				       objects[i][3], objects[i][4], objects[i][5]));
         } else if(objects[i][0] == "portal") {
             this.objects.push(new Portal(objects[i][1], objects[i][2], objects[i][3]));
+        } else if(objects[i][0] == "arc") {
+            this.objects.push(new Arc(objects[i][1], objects[i][2], objects[i][3],
+				      objects[i][4], objects[i][5], objects[i][6]));
         } else if(objects[i][0] == "playerSpawn") {
             this.player = new Player(objects[i][1], objects[i][2],
 				     objects[i][3], this);
@@ -27,12 +30,15 @@ Level.prototype.draw = function() {
 };
 
 Level.prototype.update = function() {
+    ctx.save();
+    this.player.view();
     this.player.update();
     for(var i = 0; i < this.objects.length; i++) {
 	if(this.objects[i].update) {
             this.objects[i].update();
 	}
     }
+    ctx.restore();
 };
 
 Level.prototype.closestPoint = function(point, minDistance) {

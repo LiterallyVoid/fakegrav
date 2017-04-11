@@ -37,14 +37,16 @@ Player.prototype.update = function() {
     this.angle += angleDiff * 0.05;
     var gravity = new Vec2(0, 0.2);
     gravity.rotate(this.gravity);
-    var side = gravity.get();
-    side.rotate(Math.PI * 0.5);
+    var side = new Vec2(-1, 0);
+    side.rotate(this.gravity);
+    var move = side.get();
+    move.mult(0.5);
     this.pos.add(this.vel);
     this.vel.add(gravity);
     var closestPoint = this.level.closestPoint(this.pos, this.size * 6);
     if(closestPoint[0] < this.size) {
 	if(closestPoint[2]["onTouch"]) {
-	    closestPoint[2]["onTouch"]();
+	    closestPoint[2]["onTouch"](this);
 	}
         var push = closestPoint[1].get();
         push.sub(this.pos);
@@ -85,13 +87,13 @@ Player.prototype.update = function() {
 	}
     }
     var accel = side.get();
-    accel.mult(this.vel.dot(side) * 0.5);
+    accel.mult(side.dot(this.vel) * 0.1);
     this.vel.sub(accel);
 
     if(keys[37]) {
-        this.vel.add(side);
+        this.vel.add(move);
     }
     if(keys[39]) {
-        this.vel.sub(side);
+        this.vel.sub(move);
     }
 };

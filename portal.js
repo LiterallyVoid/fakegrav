@@ -12,19 +12,23 @@ Portal.prototype.draw = function() {
     ctx.save();
     ctx.lineWidth = 2;
     for(var i = 0; i < this.particles.length; i++) {
+	var trailLength = 10;
+	if(this.particles[i].time < 10) {
+	    trailLength = this.particles[i].time;
+	}
 	var gradient = ctx.createLinearGradient(
 	    this.particles[i].pos.x, this.particles[i].pos.y,
-	    this.particles[i].pos.x - this.particles[i].vel.x * 10,
-	    this.particles[i].pos.y - this.particles[i].vel.y * 10
+	    this.particles[i].pos.x + this.particles[i].vel.x * trailLength,
+	    this.particles[i].pos.y + this.particles[i].vel.y * trailLength
 	);
-	var alpha = 1 - (this.particles[i].time / 20.0);
-	gradient.addColorStop(0, "rgba(0, 0, 0, " + alpha + ")");
-	gradient.addColorStop(1, "rgba(0, 0, 0, 0");
+	var alpha = 1 - (this.particles[i].time / 40.0);
+	gradient.addColorStop(0, "rgba(0, 0, 0, 0");
+	gradient.addColorStop(1, "rgba(0, 0, 0, " + alpha + ")");
 	ctx.strokeStyle = gradient;
 	ctx.beginPath();
 	ctx.moveTo(this.particles[i].pos.x, this.particles[i].pos.y);
-	ctx.lineTo(this.particles[i].pos.x - this.particles[i].vel.x * 10,
-		   this.particles[i].pos.y - this.particles[i].vel.y * 10);
+	ctx.lineTo(this.particles[i].pos.x + this.particles[i].vel.x * trailLength,
+		   this.particles[i].pos.y + this.particles[i].vel.y * trailLength);
 	ctx.stroke();
     }
     ctx.restore();
@@ -37,18 +41,19 @@ Portal.prototype.update = function() {
 	vel.y = Math.random() * 2 - 1;
     }
     vel.normalize();
-    vel.mult(2);
+    vel.mult(0.05);
     var pos = this.pos.get();
     var offset = vel.get();
-    offset.mult(20);
+    offset.mult(2000);
     pos.sub(offset);
     this.particles.push({
 	pos: pos,
 	vel: vel,
-	time: 20
+	time: 40
     });
 
     for(var i = 0; i < this.particles.length; i++) {
+	this.particles[i].vel.mult(1.15);
 	this.particles[i].pos.add(this.particles[i].vel);
 	this.particles[i].time--;
 	if(this.particles[i].time < 0) {
