@@ -43,50 +43,55 @@ Player.prototype.update = function() {
     move.mult(0.5);
     this.pos.add(this.vel);
     this.vel.add(gravity);
-    var closestPoint = this.level.closestPoint(this.pos, this.size * 6);
-    if(closestPoint[0] < this.size) {
-	if(closestPoint[2]["onTouch"]) {
-	    closestPoint[2]["onTouch"](this);
-	}
-        var push = closestPoint[1].get();
-        push.sub(this.pos);
-        push.normalize();
-        var normal = push.get();
-        push.mult(this.size - closestPoint[0]);
-        this.pos.sub(push);
-        var accel = normal.get();
-        accel.mult(this.vel.dot(normal));
-        if(this.vel.dot(normal) > 7) {
-            accel.mult(1.5);
-        }
-        this.vel.sub(accel);
-        
-        if(keys[38]) {
-            var force = gravity.get();
-            force.mult(-30);
-            this.vel.add(force);
-        }
+    var calculatedPoints = [];
+    for(var i = 0; i < 2; i++) {
+	var closestPoint = this.level.closestPoint(this.pos, this.size * 15, calculatedPoints);
+	calculatedPoints.push(closestPoint);
+	if(closestPoint[0] < this.size) {
+	    if(closestPoint[2]["onTouch"]) {
+		functions[closestPoint[2]["onTouch"]](this);
+		return;
+	    }
+            var push = closestPoint[1].get();
+            push.sub(this.pos);
+            push.normalize();
+            var normal = push.get();
+            push.mult(this.size - closestPoint[0]);
+            this.pos.sub(push);
+            var accel = normal.get();
+            accel.mult(this.vel.dot(normal));
+            if(this.vel.dot(normal) > 7) {
+		accel.mult(1.5);
+            }
+            this.vel.sub(accel);
+            
+            if(keys[38]) {
+		var force = gravity.get();
+		force.mult(-30);
+		this.vel.add(force);
+            }
 
-	if(!closestPoint[2]["noGravity"]) {
-            this.gravity = normal.heading() - Math.PI * 0.5;
-	}
-    } else {
-	if(closestPoint[0] < this.size * 4) {
 	    if(!closestPoint[2]["noGravity"]) {
-		var normal = closestPoint[1].get();
-		normal.sub(this.pos);
-		normal.normalize();
-		var newGravity = normal.heading() - Math.PI * 0.5;
-		var angleDiff = (newGravity - this.gravity);
-		while(angleDiff < -Math.PI) {
-		    angleDiff += Math.PI * 2;
-		    this.gravity -= Math.PI * 2;
+		this.gravity = normal.heading() - Math.PI * 0.5;
+	    }
+	} else {
+	    if(closestPoint[0] < this.size * 10) {
+		if(!closestPoint[2]["noGravity"]) {
+		    var normal = closestPoint[1].get();
+		    normal.sub(this.pos);
+		    normal.normalize();
+		    var newGravity = normal.heading() - Math.PI * 0.5;
+		    var angleDiff = (newGravity - this.gravity);
+		    while(angleDiff < -Math.PI) {
+			angleDiff += Math.PI * 2;
+			this.gravity -= Math.PI * 2;
+		    }
+		    while(angleDiff > Math.PI) {
+			angleDiff -= Math.PI * 2;
+			this.gravity += Math.PI * 2;
+		    }
+		    this.gravity += angleDiff * Math.pow(1 - (closestPoint[0] / (this.size * 10)), 5);
 		}
-		while(angleDiff > Math.PI) {
-		    angleDiff -= Math.PI * 2;
-		    this.gravity += Math.PI * 2;
-		}
-		this.gravity += angleDiff * (1 - (closestPoint[0] / (this.size * 4)));
 	    }
 	}
     }

@@ -44,9 +44,13 @@ Level.prototype.update = function() {
     }
 };
 
-Level.prototype.closestPoint = function(point, minDistance) {
+Level.prototype.closestPoint = function(point, minDistance, skip) {
+    skip = skip || [];
     var closestPoint = [1000000, null, {}];
     for(var i = 0; i < this.objects.length; i++) {
+	if(skip.indexOf(this.objects[i]) !== -1) {
+	    continue;
+	}
         var objectClosestPoint = this.objects[i].closestPoint(point, minDistance);
         if(objectClosestPoint[0] < closestPoint[0]) {
             closestPoint = objectClosestPoint;

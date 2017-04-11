@@ -1,6 +1,6 @@
 function Portal(x, y, properties) {
     this.pos = new Vec2(x, y);
-    this.properties = properties || {"onTouch": nextLevel, "noGravity": true};
+    this.properties = properties || {"onTouch": "nextLevel", "noGravity": true};
     this.size = 0;
     this.particles = [];
 };
@@ -86,7 +86,13 @@ Portal.prototype.force = function(point) {
 
     var d = point.dist(this.pos);
 
+    var amount = 50 / d;
+    amount -= 0.3;
+    if(amount < 0) {
+	return new Vec2(0, 0);
+    }
+
     var force = normal.get();
-    force.mult(2000 / (d * d));
+    force.mult(amount);
     return force;
 };
