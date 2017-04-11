@@ -1,5 +1,6 @@
 function Level(data) {
     this.objects = [];
+    this.decorations = [];
     this.player = null;
 
     var objects = data["objects"];
@@ -15,7 +16,9 @@ function Level(data) {
         } else if(objects[i][0] == "playerSpawn") {
             this.player = new Player(objects[i][1], objects[i][2],
 				     objects[i][3], this);
-        }
+        } else {
+	    this.decorations.push(new Decoration(objects[i][0], objects[i].slice(1)));
+	}
     } 
 };
 
@@ -24,6 +27,9 @@ Level.prototype.draw = function() {
     this.player.view();
     for(var i = 0; i < this.objects.length; i++) {
         this.objects[i].draw();
+    }
+    for(var i = 0; i < this.decorations.length; i++) {
+	this.decorations[i].draw();
     }
     this.player.draw();
     ctx.restore();

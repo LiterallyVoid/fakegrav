@@ -1,9 +1,9 @@
 function Player(x, y, gravity, level) {
     this.pos = new Vec2(x, y);
     this.vel = new Vec2(0, 0);
-    this.gravity = gravity;
+    this.gravity = (gravity / 180) * Math.PI;
+    this.angle = (gravity / 180) * Math.PI;
     this.pan = new Vec2(x, y);
-    this.angle = gravity;
     this.level = level;
     this.drawSize = 18;
     this.size = 20;
