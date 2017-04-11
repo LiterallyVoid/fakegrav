@@ -36,15 +36,12 @@ Level.prototype.draw = function() {
 };
 
 Level.prototype.update = function() {
-    ctx.save();
-    this.player.view();
     this.player.update();
     for(var i = 0; i < this.objects.length; i++) {
 	if(this.objects[i].update) {
             this.objects[i].update();
 	}
     }
-    ctx.restore();
 };
 
 Level.prototype.closestPoint = function(point, minDistance) {
@@ -56,4 +53,14 @@ Level.prototype.closestPoint = function(point, minDistance) {
         }
     }
     return closestPoint;
+};
+
+Level.prototype.force = function(point) {
+    var force = new Vec2(0, 0);
+    for(var i = 0; i < this.objects.length; i++) {
+	if(this.objects[i].force) {
+	    force.add(this.objects[i].force(point));
+	}
+    }
+    return force;
 };

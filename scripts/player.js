@@ -67,25 +67,30 @@ Player.prototype.update = function() {
             this.vel.add(force);
         }
 
-        this.gravity = normal.heading() - Math.PI * 0.5;
+	if(!closestPoint[2]["noGravity"]) {
+            this.gravity = normal.heading() - Math.PI * 0.5;
+	}
     } else {
 	if(closestPoint[0] < this.size * 4) {
-            var normal = closestPoint[1].get();
-            normal.sub(this.pos);
-            normal.normalize();
-            var newGravity = normal.heading() - Math.PI * 0.5;
-	    var angleDiff = (newGravity - this.gravity);
-	    while(angleDiff < -Math.PI) {
-		angleDiff += Math.PI * 2;
-		this.gravity -= Math.PI * 2;
+	    if(!closestPoint[2]["noGravity"]) {
+		var normal = closestPoint[1].get();
+		normal.sub(this.pos);
+		normal.normalize();
+		var newGravity = normal.heading() - Math.PI * 0.5;
+		var angleDiff = (newGravity - this.gravity);
+		while(angleDiff < -Math.PI) {
+		    angleDiff += Math.PI * 2;
+		    this.gravity -= Math.PI * 2;
+		}
+		while(angleDiff > Math.PI) {
+		    angleDiff -= Math.PI * 2;
+		    this.gravity += Math.PI * 2;
+		}
+		this.gravity += angleDiff * (1 - (closestPoint[0] / (this.size * 4)));
 	    }
-	    while(angleDiff > Math.PI) {
-		angleDiff -= Math.PI * 2;
-		this.gravity += Math.PI * 2;
-	    }
-	    this.gravity += angleDiff * (1 - (closestPoint[0] / (this.size * 4)));
 	}
     }
+    this.vel.add(this.level.force(this.pos));
     var accel = side.get();
     accel.mult(side.dot(this.vel) * 0.1);
     this.vel.sub(accel);

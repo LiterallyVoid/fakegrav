@@ -1,7 +1,7 @@
 function Portal(x, y, properties) {
     this.pos = new Vec2(x, y);
-    this.properties = properties || {"onTouch": nextLevel};
-    this.size = 30;
+    this.properties = properties || {"onTouch": nextLevel, "noGravity": true};
+    this.size = 0;
     this.particles = [];
 };
 
@@ -10,6 +10,7 @@ Portal.prototype.draw = function() {
     ctx.arc(this.pos.x, this.pos.y, 5, 0, Math.PI * 2);
     ctx.fill();
     ctx.save();
+    ctx.translate(this.pos.x, this.pos.y);
     ctx.lineWidth = 2;
     for(var i = 0; i < this.particles.length; i++) {
 	var trailLength = 10;
@@ -42,10 +43,9 @@ Portal.prototype.update = function() {
     }
     vel.normalize();
     vel.mult(0.05);
-    var pos = this.pos.get();
-    var offset = vel.get();
-    offset.mult(2000);
-    pos.sub(offset);
+    var pos = vel.get();
+    pos.normalize();
+    pos.mult(-100);
     this.particles.push({
 	pos: pos,
 	vel: vel,
@@ -67,9 +67,26 @@ Portal.prototype.closestPoint = function(point, minDistance) {
     var pos = this.pos.get();
     var diff = pos.get();
     diff.sub(point);
+    var normal = diff.get();
+    normal.normalize();
     var offset = diff.get();
     offset.normalize();
     offset.mult(this.size);
     pos.add(offset);
-    return [diff.mag() - this.size, pos, this.properties];
+    var props = this.properties;
+    props["force"] = new Vec2(0, 1);
+    return [diff.mag() - this.size, pos, props];
+};
+
+Portal.prototype.force = function(point) {
+    var diff = this.pos.get();
+    diff.sub(point);
+    var normal = diff.get();
+    normal.normalize();
+
+    var d = point.dist(this.pos);
+
+    var force = normal.get();
+    force.mult(2000 / (d * d));
+    return force;
 };
