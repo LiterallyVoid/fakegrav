@@ -5,7 +5,7 @@ var canvas = document.querySelector("#main");
 var ctx = canvas.getContext("2d");
 var keys = [];
 
-loadLevels("levels.json");
+loadLevels("data/levels.json");
 
 if(!window.requestAnimationFrame) {
     window.requestAnimationFrame = (function() {
